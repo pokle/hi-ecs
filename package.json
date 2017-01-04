@@ -1,0 +1,13 @@
+{
+  "name": "hi-ecs",
+  "version": "1.0.0",
+  "description": "Hello hello AWS ECS",
+  "author": "Tushar Pokle",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.9.0"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/http-server static"
+  }
+}
