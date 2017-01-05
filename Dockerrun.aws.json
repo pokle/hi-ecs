@@ -1,0 +1,80 @@
+{
+    "AWSEBDockerrunVersion": "2",
+    "volumes": [{
+        "name": "datadog-conf",
+        "host": {
+            "sourcePath": "/opt/datadog-agent/agent/conf.d"
+        }
+    }, {
+        "name": "docker-sock",
+        "host": {
+            "sourcePath": "/var/run/docker.sock"
+        }
+    }, {
+        "name": "proc",
+        "host": {
+            "sourcePath": "/proc/"
+        }
+    }, {
+        "name": "cgroup",
+        "host": {
+            "sourcePath": "/cgroup/"
+        }
+    }],
+    "containerDefinitions": [{
+        "name": "hi-cad",
+        "image": "dockerregistry-v2.seekinfra.com/hi-cad:latest",
+        "essential": true,
+        "memory": 512,
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "hi-cad-dev-logs",
+                "awslogs-region": "ap-southeast-2"
+            }
+        },
+        "portMappings": [{
+            "hostPort": 80,
+            "containerPort": 3000
+        }],
+        "mountPoints": [{
+            "sourceVolume": "awseb-logs-hi-cad",
+            "containerPath": "/var/log"
+        }],
+        "links": [
+            "datadog-agent"
+        ]
+    }, {
+        "name": "datadog-agent",
+        "image": "datadog/docker-dd-agent:11.2.585-alpine",
+        "essential": true,
+        "memory": 512,
+        "environment": [{
+            "name": "DD_API_KEY",
+            "value": "set-this-in-config.sh"
+        },{
+            "name": "EC2_TAGS",
+            "value": "yes"
+        },{
+            "name": "TAGS",
+            "value": "hi-cad,version:latest,environment:dev"
+        }],
+        "mountPoints": [{
+            "sourceVolume": "docker-sock",
+            "containerPath": "/var/run/docker.sock",
+            "readOnly": false
+        }, {
+            "sourceVolume": "proc",
+            "containerPath": "/host/proc",
+            "readOnly": true
+        }, {
+            "sourceVolume": "cgroup",
+            "containerPath": "/host/sys/fs/cgroup",
+            "readOnly": true
+        }, {
+            "sourceVolume": "datadog-conf",
+            "containerPath": "/conf.d",
+            "readOnly": true
+        }]
+    }]
+}
