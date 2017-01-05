@@ -8,6 +8,6 @@
     "http-server": "^0.9.0"
   },
   "scripts": {
-    "start": "./node_modules/.bin/http-server static"
+    "start": "./node_modules/.bin/http-server -p 3000 static"
   }
 }
