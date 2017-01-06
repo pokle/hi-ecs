@@ -14,4 +14,3 @@ run: build
 
 deploy:
 	make -f ../chalice-app-deployer/Makefile deploy
-
